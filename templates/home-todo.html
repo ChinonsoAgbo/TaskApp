@@ -1,0 +1,131 @@
+<!-- 
+    @Author: Chinonso Agbo 
+    @ version 1.0
+-->
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TODO LIST - Home</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN"
+        crossorigin="anonymous"></script>
+    <!-- Font Awesome Icons -->
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+        integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        .form-control {
+            padding: 1.375rem .75rem !important;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h3 class="pt-5 text-center">ToDo App</h3>
+
+        <div class="row">
+            <div class="col-md-7 col-lg-7">
+                <!-- Display tasks -->
+                {% if not tasks %}
+                <div class="card m-1">
+                    <div class="card-body">
+                        <img src="{% static 'images/iconImg.png' %} " class="img-fluid"
+                            style="width:350px; height:350px" alt="No tasks image">
+                    </div>
+                </div>
+                {% endif %}
+                {% for task in tasks %}
+                <div class="card m-1">
+                    <div class="card-body">
+                        <span id="taskText_{{ task.id }}">{{ task.task }}</span>
+                        <span style="position: relative; float: right;">
+                            <a href="{% url 'completeTask' task.id %}" class="btn btn-success"><i
+                                    class="fa fa-check"></i> Done</a>
+                            <a href="{% url 'deleteTask' task.id %}" class="btn btn-danger"><i
+                                    class="fa fa-trash"></i></a>
+                            <a href="javascript:void(0)" onclick="editTask('{{ task.id }}', '{{ task.task }}')"
+                                class="btn btn-primary"><i class="fa fa-pencil"></i></a>
+                        </span>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            <div class="col-md-5 col-lg-5">
+                <!-- Display completed tasks -->
+                <h5>Completed Tasks</h5>
+                {% if completed_tasks %}
+                <a href="{% url 'clearCompleted' %}" class="btn btn-danger"><i class="fa fa-trash"></i> Clear All</a>
+                {% else %}
+                No completed tasks to display.
+                {% endif %}
+                {% for task in completed_tasks %}
+                <div class="card m-1">
+                    <div class="card-body">
+                        {{ task.task }}
+                        <span style="position: relative; float: right;">
+                            <a href="{% url 'markAsUndone' task.id %}" class="btn btn-danger"><i
+                                    class="fa-solid fa-xmark"></i> Undone</a>
+                        </span>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="row mt-3">
+            <div class="col-md-6 col-lg-6">
+                <!-- To Do Form -->
+                <form action="{% url 'addTask' %}" method="POST" class="d-flex">
+                    {% csrf_token %}
+                    <input type="text" name="task" class="form-control flex-grow-1 mr-2" placeholder="Add a task">
+                    <button type="submit" class="btn btn-primary"><i class="fa fa-plus"></i> Add</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function editTask(taskId, taskText) {
+            const taskTextElement = document.getElementById(`taskText_${taskId}`);
+
+            const inputElement = document.createElement('input');
+            inputElement.setAttribute('type', 'text');
+            inputElement.setAttribute('class', 'form-control');
+            inputElement.value = taskText;
+
+            const saveButton = document.createElement('button');
+            saveButton.setAttribute('type', 'button');
+            saveButton.setAttribute('class', 'btn btn-primary');
+            saveButton.textContent = 'Save';
+
+            saveButton.addEventListener('click', function () {
+                const updatedText = inputElement.value;
+                // Update the task text on the server using AJAX or any preferred method.
+                // For demonstration, I'm updating the UI only.
+                taskTextElement.textContent = updatedText;
+
+                // Remove the input and button elements.
+                taskTextElement.parentNode.removeChild(inputElement);
+                saveButton.parentNode.removeChild(saveButton);
+            });
+
+            // Replace the task text with the input and button elements.
+            taskTextElement.textContent = '';
+            taskTextElement.appendChild(inputElement);
+            taskTextElement.appendChild(saveButton);
+        }
+    </script>
+</body>
+
+</html>
