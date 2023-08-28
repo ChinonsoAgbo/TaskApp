@@ -1,14 +1,22 @@
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import redirect,render,get_object_or_404
 
 from .models import Task
 
 # Add a new task
+# def addTask(request):
+#     task = request.POST['task'] # get HTTP POST data
+#     if task: # if task is not empty
+#         Task.objects.create(task=task) # create a new Task object
+#     return redirect('home-todo')
+
 def addTask(request):
-    task = request.POST['task'] # get HTTP POST data
-    if task: # if task is not empty
-        Task.objects.create(task=task) # create a new Task object
-    return redirect('home-todo')
+    if request.method == 'POST':
+        task = request.POST.get('task')
+        if task:
+            Task.objects.create(task=task)
+            return JsonResponse({'success': True})
+    return JsonResponse({'success': False})
 
 def deleteTask(request,task_id):
     task=get_object_or_404(Task,id=task_id) #
