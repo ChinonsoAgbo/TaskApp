@@ -18,5 +18,10 @@ urlpatterns = [
     # button to edit a task
     path('editTask/<int:task_id>/', views.editTask, name='editTask'),
 
+    # Delete all tasks
+    path('deleteAll/', views.deleteAll, name='deleteAll'),
+
+    # path('searchTask/', views.searchTask, name='searchTask'),
+
 
 ]

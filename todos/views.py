@@ -52,3 +52,17 @@ def editTask(request,task_id):
     else:
         context = {'get_task':get_task}
         return render(request,'edit_task.html', context)
+    
+def deleteAll(request):
+    Task.objects.all().delete()
+    return redirect('home-todo')
+
+# Search for tasks
+# def searchTask(request):
+#     search_query = request.GET.get('searchTask')
+#     if search_query:
+#         tasks = Task.objects.filter(task__icontains=search_query).order_by('-created_at')
+#     else:
+#         tasks = Task.objects.all().order_by('-created_at')
+    
+#     return render(request, 'home-todo.html', {'tasks': tasks})

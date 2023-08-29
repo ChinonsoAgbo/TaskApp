@@ -36,6 +36,9 @@
             width: 500px;
             /* Adjust the width as needed */
         }
+        i{
+            color:black
+        }
     </style>
 </head>
 
@@ -60,24 +63,31 @@
 
                     <li class="nav-item dropdown active ">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
-                            data-bs-toggle="dropdown" aria-expanded="false">
-                            Dropdown
+                            data-bs-toggle="dropdown" aria-expanded="false" style="font-size: 35px;">
+                            <!-- Dropdown -->
+                            
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                            <li><a class="dropdown-item" href="#">Action</a></li>
-                            <li><a class="dropdown-item" href="#">Another action</a></li>
+                            <li><a class="dropdown-item" href="{% url 'deleteAll' %}"> <i class="fa-solid fa-trash-can"> </i> Delete all </a></li>
+                            <li><a class="dropdown-item" href="{% url 'clearCompleted' %}"> <i class="fa-solid fa-trash-can">  </i> Delete all completed tasks</a></li>
+
+                            <!-- <li><a class="dropdown-item" href="#"> <i class="fa-solid fa-trash-can"> </i> Delete all</a></li> -->
+                            
                             <li>
                                 <hr class="dropdown-divider">
                             </li>
-                            <li><a class="dropdown-item" href="#">Something else here</a></li>
+                            <li><a class="dropdown-item" href="#">About KickTask</a></li>
                         </ul>
                     </li>
 
                 </ul>
-                <form class="d-flex">
-                    <input class="form-control me-2 custom-search-input " type="search" placeholder="Search" aria-label="Search">
+                <!-- <form method="get" action="{% url 'searchTask'%}" class="d-flex">
+                    {% csrf_token %}
+                    <input class="form-control me-2 custom-search-input "  name="searchTask" type="search" placeholder="Search"
+                        aria-label="Search">
+            
                     <button class="btn btn-outline-success" type="submit">Search</button>
-                </form>
+                </form> -->
             </div>
         </div>
     </nav>
@@ -85,7 +95,8 @@
 
     <!-- Main content -->
     <div class="container mt-5 d-flex justify-content-center align-items-center">
-        <div class="col-lg-12 col-md-12 col-sm-12">
+
+        <div class="col-lg-12 col-md-12 ">
             <div class="card m-5">
                 <div class="card-body">
                     <div class="d-flex flex-column align-items-start">
@@ -109,20 +120,24 @@
                 <div class="card mb-0 ">
                     <div class="card-body">
 
-                        <span id="taskText_{{ task.id }}"><p class="card-text  mb-0 "> {{ task.task }} </p></span>
-                        <small class="text-muted" style="font-size: 17px;"> {{ task.created_at|date:"n/j/Y H:i" }} </small>
+                        <span id="taskText_{{ task.id }}">
+                            <p class="card-title  mb-0 "> {{ task.task }} </p>
+                        </span>
+                        <small class="text-muted" style="font-size: 12px;"> {{ task.created_at|date:"n/j/Y H:i" }}
+                        </small>
                         <span style="position: relative; float: right;">
-                            <!-- Todo edit task -->
-
 
                             <!-- mark complete task  -->
-                            <a href="{% url 'completeTask' task.id %}" class="me-2 text-decoration-none"><i class="fa-solid fa-check"></i> </a>
+                            <a href="{% url 'completeTask' task.id %}" class="me-2 text-decoration-none"><i
+                                    class="fa-solid fa-check"></i> </a>
 
                             <!--Edit task -->
-                            <a  href="javascript:void(0)" onclick="editTask('{{ task.id }}', '{{ task.task }}')" class="me-2 text-decoration-none"> <i class="fa-solid fa-pen-to-square"></i> </a>
+                            <a href="javascript:void(0)" onclick="editTask('{{ task.id }}', '{{ task.task }}')"
+                                class="me-2 text-decoration-none"> <i class="fa-solid fa-pen-to-square"></i> </a>
 
                             <!-- Delete Task -->
-                            <a href="{% url 'deleteTask' task.id %}" class="me-2 text-decoration-none"><i class="fa-solid fa-x"></i> </a>
+                            <a href="{% url 'deleteTask' task.id %}" class="me-2 text-decoration-none"><i
+                                    class="fa-solid fa-x"></i> </a>
 
 
                         </span>
@@ -130,26 +145,33 @@
                 </div>
                 {% endfor %}
 
-                <p class="h5 m-2 ">Completed</p>
-                
+                <!-- show completed tasks -->
+                <p class="h5 m-2 ms-4  ">Completed <a href="javascript:void(0);" id="completedToggle"> <i
+                            class="fa-solid  fa-chevron-down me-2 text-decoration-none "></i> </a> </p>
+
                 <!-- completed tasks -->
+                <div id="completedTasksSection">
 
-                {% for task in completed_tasks %}
-                <div class="card ">
-                    <div class="card-body">
+                    {% for task in completed_tasks %}
+                    <div class="card ">
+                        <div class="card-body">
 
-                        <p class="card-text cancel-line mb-0"> {{ task.task }} </p>
-                        <small class="text-muted" style="font-size: 17px;" > {{ task.created_at|date:"n/j/Y H:i" }}  </small>
-                        <span style="position: relative; float: right;">
-                            <!-- UnmarkComplete  -->
-                            <a href="{% url 'markAsUndone' task.id %}" class=" me-2 text-decoration-none "><i class="fa-solid fa-arrow-rotate-left"></i>
-                            </a>
+                            <p class="card-text cancel-line mb-0"> {{ task.task }} </p>
+                            <small class="text-muted" style="font-size: 17px;"> {{ task.created_at|date:"n/j/Y H:i" }}
+                            </small>
+                            <span style="position: relative; float: right;">
+                                <!-- UnmarkComplete  -->
+                                <a href="{% url 'markAsUndone' task.id %}" class=" me-2 text-decoration-none "><i
+                                        class="fa-solid fa-arrow-rotate-left"></i>
+                                </a>
 
-                            <!--To delet task -->
-                            <a href="{% url 'deleteTask' task.id %}" class=" me-2 text-decoration-none "> <i class="fa-solid fa-x"></i> </a>
-                        </span>
+                                <!--To delet task -->
+                                <a href="{% url 'deleteTask' task.id %}" class=" me-2 text-decoration-none "> <i
+                                        class="fa-solid fa-x"></i> </a>
+                            </span>
+                        </div>
+                        {% endfor %}
                     </div>
-                {% endfor %}
                 </div>
 
 
@@ -163,31 +185,12 @@
 
 
 
-    </div>
-
-    <!-- footer -->
-    <div class="mt-5 p-4 bg-dark text-white text-center fixed-bottom">
-        <p>@ Chinonso </p>
-    </div>
-    </div>
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
 
     <script>
-     function editTask(taskId, taskText) {
+       function editTask(taskId, taskText) {
             const taskTextElement = document.getElementById(`taskText_${taskId}`);
 
             const inputElement = document.createElement('input');
@@ -200,7 +203,7 @@
                     const updatedText = inputElement.value;
                     // Update the task text on the server using AJAX or any preferred method.
                     // For demonstration, I'm updating the UI only.
-                    taskTextElement.textContent = updatedText;
+                    taskTextElement.innerHTML = updatedText + "<br>";
 
                     // Remove the input element.
                     taskTextElement.removeChild(inputElement);
@@ -212,7 +215,8 @@
             taskTextElement.appendChild(inputElement);
             inputElement.focus(); // Focus on the input field
         }
-    function toggleTaskInput() {
+
+        function toggleTaskInput() {
             const taskInputContainer = document.getElementById('taskInputContainer');
             const inputElement = document.createElement('input');
             inputElement.setAttribute('type', 'text');
@@ -237,7 +241,7 @@
             taskInputContainer.classList.toggle('d-none'); // Show the input container
         }
         function saveTaskToDatabase(taskText) {
-              if (taskText.trim() === '') {
+            if (taskText.trim() === '') {
                 return; // Don't save empty tasks
             }
             // Send a POST request to the server using AJAX
@@ -264,6 +268,50 @@
                     console.error('Error:', error);
                 });
         }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const completedToggle = document.getElementById('completedToggle'); // complete markdown 
+
+            const completedTasksSection = document.getElementById('completedTasksSection'); // complete tasks section container 
+
+            completedTasksSection.classList.add('d-none'); // Hide the completed tasks section initially
+
+
+            completedToggle.addEventListener('click', function () {
+                completedTasksSection.classList.toggle('d-none');
+
+            });
+        });
+
+
+
+        // search functionality
+
+    //   // Inside the search function
+    //     function searchTasks() {
+    //         const searchInput = document.querySelector('.custom-search-input').value;
+
+    //         fetch(`/todos/search/?task=${encodeURIComponent(searchInput)}`)
+    //             .then(response => response.json())
+    //             .then(data => {
+    //                 // Update the task list with the returned data
+    //                 const tasksContainer = document.getElementById('tasksContainer');
+    //                 tasksContainer.innerHTML = ''; // Clear existing tasks
+
+    //                 // Loop through the data and create task elements
+    //                 for (const task of data.tasks) {
+    //                     const taskElement = document.createElement('div');
+    //                     taskElement.textContent = task.task;
+    //                     // Add other task details here
+
+    //                     tasksContainer.appendChild(taskElement);
+    //                 }
+    //             })
+    //             .catch(error => {
+    //                 console.error('Error:', error);
+    //             });
+    //     }
+
 
     </script>
 </body>
