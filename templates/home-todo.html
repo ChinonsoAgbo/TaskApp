@@ -36,16 +36,13 @@
             width: 500px;
             /* Adjust the width as needed */
         }
-        i{
-            color:black
+
+        i {
+            color: black;
         }
+        
     </style>
 </head>
-
-
-
-
-
 
 <body>
     <!--Navigation -->
@@ -65,14 +62,17 @@
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
                             data-bs-toggle="dropdown" aria-expanded="false" style="font-size: 35px;">
                             <!-- Dropdown -->
-                            
-                        </a>
-                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                            <li><a class="dropdown-item" href="{% url 'deleteAll' %}"> <i class="fa-solid fa-trash-can"> </i> Delete all </a></li>
-                            <li><a class="dropdown-item" href="{% url 'clearCompleted' %}"> <i class="fa-solid fa-trash-can">  </i> Delete all completed tasks</a></li>
 
-                            <!-- <li><a class="dropdown-item" href="#"> <i class="fa-solid fa-trash-can"> </i> Delete all</a></li> -->
-                            
+                        </a>
+                        <ul class="dropdown-menu " aria-labelledby="navbarDropdown">
+                            <li><a class="dropdown-item " href="{% url 'deleteAll' %}"> <i
+                                        class="fa-solid fa-trash-can">
+                                    </i> Delete
+                                    all </a></li>
+                            <li><a class="dropdown-item" href="{% url 'clearCompleted' %}"> <i
+                                        class="fa-solid fa-trash-can"> </i>
+                                    Delete all completed</a></li>
+
                             <li>
                                 <hr class="dropdown-divider">
                             </li>
@@ -81,116 +81,95 @@
                     </li>
 
                 </ul>
-                <!-- <form method="get" action="{% url 'searchTask'%}" class="d-flex">
-                    {% csrf_token %}
-                    <input class="form-control me-2 custom-search-input "  name="searchTask" type="search" placeholder="Search"
-                        aria-label="Search">
-            
-                    <button class="btn btn-outline-success" type="submit">Search</button>
-                </form> -->
+
             </div>
         </div>
     </nav>
-    <!-- <h3 class="pt-5 center"> Your Kick Tasks </h3> -->
-
-    <!-- Main content -->
-    <div class="container mt-5 d-flex justify-content-center align-items-center">
-
-        <div class="col-lg-12 col-md-12 ">
-            <div class="card m-5">
-                <div class="card-body">
-                    <div class="d-flex flex-column align-items-start">
-                        <a href="javascript:void(0)" onclick="toggleTaskInput()" class="card-link btn no-outline">
-                            <h4 class="card-title"><i class="fa-solid fa-plus"></i> Add Task</h4>
-                        </a>
-                        <div id="taskInputContainer" class="mt-2 d-none">
-                            <form method="post" action="{% url 'addTask' %}">
-                                {% csrf_token %}
-                                {{ form.as_p }}
-                            </form>
-                        </div>
-                    </div>
 
 
-                </div>
-
-                <!-- show tasks -->
-
-                {% for task in tasks %}
-                <div class="card mb-0 ">
-                    <div class="card-body">
-
-                        <span id="taskText_{{ task.id }}">
-                            <p class="card-title  mb-0 "> {{ task.task }} </p>
-                        </span>
-                        <small class="text-muted" style="font-size: 12px;"> {{ task.created_at|date:"n/j/Y H:i" }}
-                        </small>
-                        <span style="position: relative; float: right;">
-
-                            <!-- mark complete task  -->
-                            <a href="{% url 'completeTask' task.id %}" class="me-2 text-decoration-none"><i
-                                    class="fa-solid fa-check"></i> </a>
-
-                            <!--Edit task -->
-                            <a href="javascript:void(0)" onclick="editTask('{{ task.id }}', '{{ task.task }}')"
-                                class="me-2 text-decoration-none"> <i class="fa-solid fa-pen-to-square"></i> </a>
-
-                            <!-- Delete Task -->
-                            <a href="{% url 'deleteTask' task.id %}" class="me-2 text-decoration-none"><i
-                                    class="fa-solid fa-x"></i> </a>
-
-
-                        </span>
-                    </div>
-                </div>
-                {% endfor %}
-
-                <!-- show completed tasks -->
-                <p class="h5 m-2 ms-4  ">Completed <a href="javascript:void(0);" id="completedToggle"> <i
-                            class="fa-solid  fa-chevron-down me-2 text-decoration-none "></i> </a> </p>
-
-                <!-- completed tasks -->
-                <div id="completedTasksSection">
-
-                    {% for task in completed_tasks %}
-                    <div class="card ">
+        <!-- Main content -->
+        <div class="container-fluid align-items-center">
+            <div class="row">
+                <div class="col-lg-8 offset-lg-2 col-md-10 offset-md-1 col-sm-12">
+                    <div class="card m-5">
+                        
                         <div class="card-body">
-
-                            <p class="card-text cancel-line mb-0"> {{ task.task }} </p>
-                            <small class="text-muted" style="font-size: 17px;"> {{ task.created_at|date:"n/j/Y H:i" }}
-                            </small>
-                            <span style="position: relative; float: right;">
-                                <!-- UnmarkComplete  -->
-                                <a href="{% url 'markAsUndone' task.id %}" class=" me-2 text-decoration-none "><i
-                                        class="fa-solid fa-arrow-rotate-left"></i>
+                            <div class="d-flex flex-column align-items-start">
+                                <a href="javascript:void(0)" onclick="toggleTaskInput()" class="card-link btn no-outline">
+                                    <h4 class="card-title"><i class="fa-solid fa-plus"></i> Add Task <span
+                                            class="text-decoration-none ms-2" style="font-size:15px; color:gray">
+                                            ({{tasks|length}})</span>
+                                    </h4>
                                 </a>
-
-                                <!--To delet task -->
-                                <a href="{% url 'deleteTask' task.id %}" class=" me-2 text-decoration-none "> <i
-                                        class="fa-solid fa-x"></i> </a>
-                            </span>
+                                <!-- Add Task form -->
+                                <div id="taskInputContainer" class="mt-2 d-none">
+                                    <form method="post" action="{% url 'addTask' %}">
+                                        {% csrf_token %}
+                                        {{ form.as_p }}
+                                    </form>
+                                </div>
+                            </div>
                         </div>
-                        {% endfor %}
+
+                        <div class="mt-4">
+                            <!-- show tasks -->
+                            {% for task in tasks %}
+                            <div class="card mb-2">
+                                <div class="card-body">
+                                    <span id="taskText_{{ task.id }}">
+                                        <p class="card-title mb-0">{{ task.task }}</p>
+                                    </span>
+                                    <small class="text-muted" style="font-size: 12px;">{{ task.created_at|date:"n/j/Y H:i"}}
+                                        </small>
+                                    <span style="position: relative; float: right;">
+                                        <!-- mark complete task -->
+                                        <a href="{% url 'completeTask' task.id %}" class="me-2 text-decoration-none"><i
+                                                class="fa-solid fa-check"></i></a>
+                                        <!-- Edit task -->
+                                        <a href="javascript:void(0)" onclick="editTask('{{ task.id }}', '{{ task.task }}')"
+                                            class="me-2 text-decoration-none"><i class="fa-solid fa-pen-to-square"></i></a>
+                                        <!-- Delete Task -->
+                                        <a href="{% url 'deleteTask' task.id %}" class="me-2 text-decoration-none"><i
+                                                class="fa-solid fa-x"></i></a>
+                                    </span>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+
+                        <!-- "Completed" section header outside of the loop -->
+                        <p class="h5 mt-4 ms-4">Completed <a href="javascript:void(0);" id="completedToggle"><i
+                                    class="fa-solid  fa-chevron-down me-2 text-decoration-none"></i></a> <span
+                                class="text-decoration-none ms-1" style="font-size: 15px; color: gray"> ({{completed_tasks|length }})</span>
+                                </p>
+                        <div id="completedTasksSection">
+                            {% for task in completed_tasks %}
+                            <div class="card mb-2">
+                                <div class="card-body">
+                                    <p class="card-text cancel-line mb-0">{{ task.task }}</p>
+                                    <small class="text-muted" style="font-size: 12px;">{{ task.created_at|date:"n/j/Y H:i"}}
+                                        </small>
+                                    <span style="position: relative; float: right;">
+                                        <!-- UnmarkComplete --> 
+                                        <a href="{% url 'markAsUndone' task.id %}" class="me-2 text-decoration-none"><i
+                                                class="fa-solid fa-arrow-rotate-left"></i></a>
+                                        <!-- Delete Task -->
+                                        <a href="{% url 'deleteTask' task.id %}" class="me-2 text-decoration-none"><i
+                                                class="fa-solid fa-x"></i></a>
+                                    </span>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
                     </div>
                 </div>
-
-
-
-
-
             </div>
-
         </div>
-    </div>
 
-
-
-
-
-
+<!-- Your JavaScript code... -->
 
     <script>
-       function editTask(taskId, taskText) {
+        function editTask(taskId, taskText) {
             const taskTextElement = document.getElementById(`taskText_${taskId}`);
 
             const inputElement = document.createElement('input');
@@ -203,7 +182,7 @@
                     const updatedText = inputElement.value;
                     // Update the task text on the server using AJAX or any preferred method.
                     // For demonstration, I'm updating the UI only.
-                    taskTextElement.innerHTML = updatedText + "<br>";
+                    taskTextElement.textContent = updatedText;
 
                     // Remove the input element.
                     taskTextElement.removeChild(inputElement);
@@ -215,7 +194,6 @@
             taskTextElement.appendChild(inputElement);
             inputElement.focus(); // Focus on the input field
         }
-
         function toggleTaskInput() {
             const taskInputContainer = document.getElementById('taskInputContainer');
             const inputElement = document.createElement('input');
@@ -240,6 +218,8 @@
             inputElement.focus(); // Focus on the input field
             taskInputContainer.classList.toggle('d-none'); // Show the input container
         }
+
+        // save task
         function saveTaskToDatabase(taskText) {
             if (taskText.trim() === '') {
                 return; // Don't save empty tasks
@@ -283,34 +263,6 @@
             });
         });
 
-
-
-        // search functionality
-
-    //   // Inside the search function
-    //     function searchTasks() {
-    //         const searchInput = document.querySelector('.custom-search-input').value;
-
-    //         fetch(`/todos/search/?task=${encodeURIComponent(searchInput)}`)
-    //             .then(response => response.json())
-    //             .then(data => {
-    //                 // Update the task list with the returned data
-    //                 const tasksContainer = document.getElementById('tasksContainer');
-    //                 tasksContainer.innerHTML = ''; // Clear existing tasks
-
-    //                 // Loop through the data and create task elements
-    //                 for (const task of data.tasks) {
-    //                     const taskElement = document.createElement('div');
-    //                     taskElement.textContent = task.task;
-    //                     // Add other task details here
-
-    //                     tasksContainer.appendChild(taskElement);
-    //                 }
-    //             })
-    //             .catch(error => {
-    //                 console.error('Error:', error);
-    //             });
-    //     }
 
 
     </script>
