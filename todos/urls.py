@@ -21,7 +21,9 @@ urlpatterns = [
     # Delete all tasks
     path('deleteAll/', views.deleteAll, name='deleteAll'),
 
-    # path('searchTask/', views.searchTask, name='searchTask'),
+    path('taskInfo/<int:task_id>/', views.taskInfo, name='taskInfo'), # provides the task
+
+    path('search_blogs/', views.search_blogs, name='search_blogs'),
 
 
 ]
