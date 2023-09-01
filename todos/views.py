@@ -1,5 +1,7 @@
 from django.http import JsonResponse
 from django.shortcuts import redirect, render, get_object_or_404
+from django.db.models import Q
+
 
 from .models import Task
 
@@ -57,16 +59,12 @@ def deleteAll(request):
     Task.objects.all().delete()
     return redirect("home-todo")
 
-def taskInfo(request, task_id):
-    get_task = get_object_or_404(Task, id=task_id)  
-    context = {"get_task": get_task}
-    return render(request, "task_info.html", context)
 
 
-def search_blogs(request):
-    if'q' in request.GET and request.GET["q"]:
-        search_term = request.GET.get("q").strip()
-        searched_blogs = Task.objects.filter(task=search_term) # searches for the task
+def searchBlogs(request):
+    if'query' in request.GET and request.GET["query"]:
+        search_term = request.GET.get("query")
+        searched_blogs = Task.objects.filter(Q(task__icontains=search_term))# searches for the task
         message =  f'Search results for: {search_term}'
 
         # return Task.objects.filter(title__icontains=search_term)
@@ -77,10 +75,4 @@ def search_blogs(request):
         }
         return render(request, 'search.html', context)
 
-    return render(request, 'search.html')  # Render an empty search_results.html template if no query
-
-
-    #     return render(request,'search.html', {"message": message, "blogs": searched_blogs})
-    # else:
-    #     message = "You haven't searched for any term"
-    #     return render(request,'search.html', {"message": message})
+    return render(request, 'search.html','no Info found ')  # Render 
