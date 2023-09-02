@@ -10,7 +10,9 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TODO LIST - Home</title>
+    <meta name="csrf-token" content="{{ csrf_token }}"> <!-- Global token variable -->
+
+    <title>KickTaskHome</title>
 
     <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"
@@ -40,11 +42,14 @@
         i {
             color: black;
         }
-        
     </style>
+
+
 </head>
 
 <body>
+    <script src="{% static 'logic.js' %}"></script>
+
     <!--Navigation -->
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container-fluid">
@@ -82,9 +87,10 @@
 
                 </ul>
                 <!-- ================================================ search bar ================================================================= -->
-                <form action = "{% url 'searchBlogs'%}" class="d-flex" method="get">
+                <form action="{% url 'searchBlogs'%}" class="d-flex" method="get">
                     {% csrf_token %}
-                    <input name="query" class="form-control me-2 custom-search-input " type="search" placeholder="Search" aria-label="Search">
+                    <input name="query" class="form-control me-2 custom-search-input " type="search"
+                        placeholder="Search" aria-label="Search">
                     <button class="btn btn-outline-success" type="submit">Search</button>
                 </form>
 
@@ -93,185 +99,84 @@
     </nav>
 
 
-        <!-- Main content -->
-        <div class="container-fluid align-items-center">
-            <div class="row">
-                <div class="col-lg-8 offset-lg-2 col-md-10 offset-md-1 col-sm-12">
-                    <div class="card m-5">
-                        
-                        <div class="card-body">
-                            <div class="d-flex flex-column align-items-start">
-                                <a href="javascript:void(0)" onclick="toggleTaskInput()" class="card-link btn no-outline">
-                                    <h4 class="card-title"><i class="fa-solid fa-plus"></i> Add Task <span
-                                            class="text-decoration-none ms-2" style="font-size:15px; color:gray">
-                                            ({{tasks|length}})</span>
-                                    </h4>
-                                </a>
-                                <!-- Add Task form -->
-                                <div id="taskInputContainer" class="mt-2 d-none">
-                                    <form method="post" action="{% url 'addTask' %}">
-                                        {% csrf_token %}
-                                        {{ form.as_p }}
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
+    <!-- Main content -->
+    <div class="container-fluid align-items-center">
+        <div class="row">
+            <div class="col-lg-8 offset-lg-2 col-md-10 offset-md-1 col-sm-12">
+                <div class="card m-5">
 
-                        <div class="mt-4">
-                            <!-- show tasks -->
-                            {% for task in tasks %}
-                            <div class="card mb-2">
-                                <div class="card-body">
-                                    <span id="taskText_{{ task.id }}">
-                                        <p class="card-title mb-0">{{ task.task }}</p>
-                                    </span>
-                                    <small class="text-muted" style="font-size: 12px;">{{ task.created_at|date:"n/j/Y H:i"}}
-                                        </small>
-                                    <span style="position: relative; float: right;">
-                                        <!-- mark complete task -->
-                                        <a href="{% url 'completeTask' task.id %}" class="me-2 text-decoration-none"><i
-                                                class="fa-solid fa-check"></i></a>
-                                        <!-- Edit task -->
-                                        <a href="javascript:void(0)" onclick="editTask('{{ task.id }}', '{{ task.task }}')"
-                                            class="me-2 text-decoration-none"><i class="fa-solid fa-pen-to-square"></i></a>
-                                        <!-- Delete Task -->
-                                        <a href="{% url 'deleteTask' task.id %}" class="me-2 text-decoration-none"><i
-                                                class="fa-solid fa-x"></i></a>
-                                    </span>
-                                </div>
-                            </div>
-                            {% endfor %}
-                        </div>
+                    <div class="card-body">
+                        <div class="d-flex flex-column align-items-start">
+                            <a href="javascript:void(0)" onclick="toggleTaskInput()" class="card-link btn no-outline">
+                                <h4 class="card-title"><i class="fa-solid fa-plus"></i> Add Task <span
+                                        class="text-decoration-none ms-2" style="font-size:15px; color:gray">
+                                        ({{tasks|length}})</span>
+                                </h4>
+                            </a>
+                            <!-- Add Task form -->
+                            <div id="taskInputContainer" class="mt-2 d-none">
 
-                        <!-- "Completed" section header outside of the loop -->
-                        <p class="h5 mt-4 ms-4">Completed <a href="javascript:void(0);" id="completedToggle"><i
-                                    class="fa-solid  fa-chevron-down me-2 text-decoration-none"></i></a> <span
-                                class="text-decoration-none ms-1" style="font-size: 15px; color: gray"> ({{completed_tasks|length }})</span>
-                                </p>
-                        <div id="completedTasksSection">
-                            {% for task in completed_tasks %}
-                            <div class="card mb-2">
-                                <div class="card-body">
-                                    <p class="card-text cancel-line mb-0">{{ task.task }}</p>
-                                    <small class="text-muted" style="font-size: 12px;">{{ task.created_at|date:"n/j/Y H:i"}}
-                                        </small>
-                                    <span style="position: relative; float: right;">
-                                        <!-- UnmarkComplete --> 
-                                        <a href="{% url 'markAsUndone' task.id %}" class="me-2 text-decoration-none"><i
-                                                class="fa-solid fa-arrow-rotate-left"></i></a>
-                                        <!-- Delete Task -->
-                                        <a href="{% url 'deleteTask' task.id %}" class="me-2 text-decoration-none"><i
-                                                class="fa-solid fa-x"></i></a>
-                                    </span>
-                                </div>
                             </div>
-                            {% endfor %}
                         </div>
+                    </div>
+                    <div class="mt-4">
+                        <!-- show tasks -->
+                        {% for task in tasks %}
+                        <div class="card mb-2">
+                            <div class="card-body">
+                                <span id="taskText_{{ task.id }}">
+                                    <p class="card-title mb-0">{{ task.task }}</p>
+                                </span>
+                                <small class="text-muted" style="font-size: 12px;">{{ task.created_at|date:"n/j/Y H:i"}}
+                                </small>
+                                <span style="position: relative; float: right;">
+                                    <!-- mark complete task -->
+                                    <a href="{% url 'completeTask' task.id %}" class="me-2 text-decoration-none"><i
+                                            class="fa-solid fa-check"></i></a>
+                                    <!-- Edit task -->
+                                    <a href="javascript:void(0)" onclick="editTask('{{ task.id }}', '{{ task.task }}')"
+                                        class="me-2 text-decoration-none"><i class="fa-solid fa-pen-to-square"></i></a>
+                                    <!-- Delete Task -->
+                                    <a href="{% url 'deleteTask' task.id %}" class="me-2 text-decoration-none"><i
+                                            class="fa-solid fa-x"></i></a>
+                                </span>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    <!-- "Completed" section header outside of the loop -->
+                    <p class="h5 mt-4 ms-4">Completed <a href="javascript:void(0);" id="completedToggle"><i
+                                class="fa-solid  fa-chevron-down me-2 text-decoration-none"></i></a> <span
+                            class="text-decoration-none ms-1" style="font-size: 15px; color: gray">
+                            ({{completed_tasks|length }})</span>
+                    </p>
+                    <div id="completedTasksSection">
+                        {% for task in completed_tasks %}
+                        <div class="card mb-2">
+                            <div class="card-body">
+                                <p class="card-text cancel-line mb-0">{{ task.task }}</p>
+                                <small class="text-muted" style="font-size: 12px;">{{ task.created_at|date:"n/j/Y H:i"}}
+                                </small>
+                                <span style="position: relative; float: right;">
+                                    <!-- UnmarkComplete -->
+                                    <a href="{% url 'markAsUndone' task.id %}" class="me-2 text-decoration-none"><i
+                                            class="fa-solid fa-arrow-rotate-left"></i></a>
+                                    <!-- Delete Task -->
+                                    <a href="{% url 'deleteTask' task.id %}" class="me-2 text-decoration-none"><i
+                                            class="fa-solid fa-x"></i></a>
+                                </span>
+                            </div>
+                        </div>
+                        {% endfor %}
                     </div>
                 </div>
             </div>
         </div>
+    </div>
 
-<!-- Your JavaScript code... -->
+    <!-- Your JavaScript code... -->
 
-    <script>
-        function editTask(taskId, taskText) {
-            const taskTextElement = document.getElementById(`taskText_${taskId}`);
-
-            const inputElement = document.createElement('input');
-            inputElement.setAttribute('type', 'text');
-            inputElement.setAttribute('class', 'form-control');
-            inputElement.value = taskText;
-
-            inputElement.addEventListener('keydown', function (e) {
-                if (e.keyCode === 13) {
-                    const updatedText = inputElement.value;
-                    // Update the task text on the server using AJAX or any preferred method.
-                    // For demonstration, I'm updating the UI only.
-                    taskTextElement.textContent = updatedText;
-
-                    // Remove the input element.
-                    taskTextElement.removeChild(inputElement);
-                }
-            });
-
-            // Replace the task text with the input element.
-            taskTextElement.textContent = '';
-            taskTextElement.appendChild(inputElement);
-            inputElement.focus(); // Focus on the input field
-        }
-        function toggleTaskInput() {
-            const taskInputContainer = document.getElementById('taskInputContainer');
-            const inputElement = document.createElement('input');
-            inputElement.setAttribute('type', 'text');
-            inputElement.setAttribute('class', 'form-control');
-            inputElement.setAttribute('size', '100');
-
-            // Add event listeners for Enter keypress events
-            inputElement.addEventListener('keydown', function (e) {
-                if (e.keyCode === 13) {
-                    e.preventDefault(); // Prevent form submission
-                    saveTaskToDatabase(inputElement.value);
-                    inputElement.value = ''; // Clear input after saving
-                    inputElement.focus(); // Focus on the input field
-                }
-            });
-
-            // Clear existing content and then append the input element
-            taskInputContainer.innerHTML = '';
-            taskInputContainer.appendChild(inputElement);
-
-            inputElement.focus(); // Focus on the input field
-            taskInputContainer.classList.toggle('d-none'); // Show the input container
-        }
-
-        // save task
-        function saveTaskToDatabase(taskText) {
-            if (taskText.trim() === '') {
-                return; // Don't save empty tasks
-            }
-            // Send a POST request to the server using AJAX
-            const formData = new FormData();
-            formData.append('task', taskText);
-
-            fetch('/todos/addTask/', {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'X-CSRFToken': '{{ csrf_token }}', // Add your CSRF token here
-                },
-            })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        // Task saved successfully, you can take appropriate action
-                        window.location.reload(); // Reload the page to see the updated task list
-                    } else {
-                        console.error('Failed to save task.');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                });
-        }
-
-        document.addEventListener('DOMContentLoaded', function () {
-            const completedToggle = document.getElementById('completedToggle'); // complete markdown 
-
-            const completedTasksSection = document.getElementById('completedTasksSection'); // complete tasks section container 
-
-            completedTasksSection.classList.add('d-none'); // Hide the completed tasks section initially
-
-
-            completedToggle.addEventListener('click', function () {
-                completedTasksSection.classList.toggle('d-none');
-
-            });
-        });
-
-
-
-    </script>
 </body>
 
 </html>
