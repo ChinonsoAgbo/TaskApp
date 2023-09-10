@@ -1,3 +1,6 @@
+
+
+
 # Todo App 
 The Todo app is a simple web application built using Django that allows you to manage your tasks and to-do lists. You can add, view, and mark tasks as completed.
 
